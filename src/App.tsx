@@ -1,19 +1,21 @@
 import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Stage, Layer, Rect, Circle, Text } from "react-konva";
 import "./App.css";
-interface IPoint {
+import { generateRandomPoints } from "./generateRandomPoints";
+export interface IPoint {
   x: number;
   y: number;
   radius: number;
 }
 
-const POINT_RADIUS = 10;
-const FIELD_WIDTH = 1000;
-const FIELD_HEIGHT = 500;
+export const POINT_RADIUS = 10;
+export const FIELD_WIDTH = 1000;
+export const FIELD_HEIGHT = 500;
 
 const App = () => {
   const [numPoints, setNumPoints] = useState(10);
   const [points, setPoints] = useState<IPoint[]>([]);
+  const [circle, setCircle] = useState<IPoint | null>();
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
   const handleNumPointsChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -24,50 +26,6 @@ const App = () => {
   useEffect(() => {
     setPoints(generateRandomPoints(numPoints));
   }, [numPoints, setPoints]);
-
-  const generateRandomPoints = (numPoints: number) => {
-    const points = [];
-    const minDistance = POINT_RADIUS * 2;
-
-    const isColliding = (point: IPoint, otherPoints: IPoint[]) => {
-      if (point.y <= point.radius) return true;
-      if (point.y >= FIELD_HEIGHT - point.radius - 1) return true;
-
-      if (point.x <= point.radius) return true;
-      if (point.x >= FIELD_WIDTH - point.radius - 1) return true;
-
-      for (const otherPoint of otherPoints) {
-        const distance = Math.sqrt(
-          Math.pow(point.x - otherPoint.x, 2) +
-            Math.pow(point.y - otherPoint.y, 2)
-        );
-        if (distance < minDistance) {
-          return true;
-        }
-      }
-      return false;
-    };
-    let i = 0;
-    while (points.length < numPoints) {
-      const newPoint = {
-        x: Math.floor(Math.random() * FIELD_WIDTH),
-        y: Math.floor(Math.random() * FIELD_HEIGHT),
-        radius: POINT_RADIUS,
-      };
-
-      if (!isColliding(newPoint, points)) {
-        points.push(newPoint);
-      } else {
-        i++;
-        if (i > 10000) {
-          alert("To many points, try less");
-          return points;
-        }
-      }
-    }
-
-    return points;
-  };
 
   const handleMouseEnter = (index: number) => {
     setHoveredPoint(index);
@@ -106,6 +64,14 @@ const App = () => {
             fill="#f0f0f0"
             stroke="black"
           />
+          {circle ? (
+            <Circle
+              x={circle?.x}
+              y={circle?.y}
+              radius={circle?.radius}
+              stroke="blue"
+            />
+          ) : null}
           {points?.map((point, index) => (
             <Fragment key={index}>
               <Circle
