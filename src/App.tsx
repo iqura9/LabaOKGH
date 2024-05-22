@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Stage, Layer, Rect, Circle, Text } from "react-konva";
 import "./App.css";
 interface IPoint {
@@ -61,6 +61,8 @@ const App = () => {
     setHoveredPoint(null);
   };
 
+  const [pointCoord, setPointCoord] = useState();
+
   return (
     <div className="Wrapper">
       <label htmlFor="numPoints">Number of Points:</label>
@@ -70,8 +72,12 @@ const App = () => {
         value={numPoints}
         onChange={handleNumPointsChange}
       />
-      <Stage width={500} height={500}>
-        <Layer>
+      <div>
+        x: {pointCoord?.evt?.offsetX}, y: {pointCoord?.evt?.offsetY}
+      </div>
+
+      <Stage width={500} height={500} style={{ cursor: "pointer" }}>
+        <Layer onMouseMove={(e) => setPointCoord(e)}>
           <Rect
             x={0}
             y={0}
@@ -81,7 +87,7 @@ const App = () => {
             stroke="black"
           />
           {points?.map((point, index) => (
-            <React.Fragment key={index}>
+            <Fragment key={index}>
               <Circle
                 x={point.x}
                 y={point.y}
@@ -97,7 +103,7 @@ const App = () => {
                   text={`(${point.x.toFixed(0)}, ${point.y.toFixed(0)})`}
                 />
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </Layer>
       </Stage>
