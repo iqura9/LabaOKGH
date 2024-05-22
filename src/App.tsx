@@ -7,6 +7,10 @@ interface IPoint {
   radius: number;
 }
 
+const POINT_RADIUS = 10;
+const FIELD_WIDTH = 1000;
+const FIELD_HEIGHT = 500;
+
 const App = () => {
   const [numPoints, setNumPoints] = useState(10);
   const [points, setPoints] = useState<IPoint[]>([]);
@@ -23,9 +27,15 @@ const App = () => {
 
   const generateRandomPoints = (numPoints: number) => {
     const points = [];
-    const minDistance = 20;
+    const minDistance = POINT_RADIUS * 2;
 
     const isColliding = (point: IPoint, otherPoints: IPoint[]) => {
+      if (point.y <= point.radius) return true;
+      if (point.y >= FIELD_HEIGHT - point.radius - 1) return true;
+
+      if (point.x <= point.radius) return true;
+      if (point.x >= FIELD_WIDTH - point.radius - 1) return true;
+
       for (const otherPoint of otherPoints) {
         const distance = Math.sqrt(
           Math.pow(point.x - otherPoint.x, 2) +
@@ -37,16 +47,22 @@ const App = () => {
       }
       return false;
     };
-
+    let i = 0;
     while (points.length < numPoints) {
       const newPoint = {
-        x: Math.floor(Math.random() * 500),
-        y: Math.floor(Math.random() * 500),
-        radius: 10,
+        x: Math.floor(Math.random() * FIELD_WIDTH),
+        y: Math.floor(Math.random() * FIELD_HEIGHT),
+        radius: POINT_RADIUS,
       };
 
       if (!isColliding(newPoint, points)) {
         points.push(newPoint);
+      } else {
+        i++;
+        if (i > 10000) {
+          alert("To many points, try less");
+          return points;
+        }
       }
     }
 
@@ -65,7 +81,7 @@ const App = () => {
 
   return (
     <div className="Wrapper">
-      <label htmlFor="numPoints">Number of Points:</label>
+      <label htmlFor="numPoints">Number of Points: {numPoints}</label>
       <input
         type="number"
         id="numPoints"
@@ -76,13 +92,17 @@ const App = () => {
         x: {pointCoord?.evt?.offsetX}, y: {pointCoord?.evt?.offsetY}
       </div>
 
-      <Stage width={500} height={500} style={{ cursor: "pointer" }}>
+      <Stage
+        width={FIELD_WIDTH}
+        height={FIELD_HEIGHT}
+        style={{ cursor: "pointer" }}
+      >
         <Layer onMouseMove={(e) => setPointCoord(e)}>
           <Rect
             x={0}
             y={0}
-            width={500}
-            height={500}
+            width={FIELD_WIDTH}
+            height={FIELD_HEIGHT}
             fill="#f0f0f0"
             stroke="black"
           />
@@ -97,11 +117,13 @@ const App = () => {
                 onMouseLeave={handleMouseLeave}
               />
               {hoveredPoint === index && (
-                <Text
-                  x={point.x + 15}
-                  y={point.y + 15}
-                  text={`(${point.x.toFixed(0)}, ${point.y.toFixed(0)})`}
-                />
+                <span style={{ zIndex: 1000 }}>
+                  <Text
+                    x={point.x + 15}
+                    y={point.y + 15}
+                    text={`(${point.x.toFixed(0)}, ${point.y.toFixed(0)})`}
+                  />
+                </span>
               )}
             </Fragment>
           ))}
