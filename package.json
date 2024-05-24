@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "d3-delaunay": "^6.0.4",
     "konva": "^9.3.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-konva": "^18.2.10"
+    "react-konva": "^18.2.10",
+    "voronoi": "^1.0.0"
   },
   "devDependencies": {
+    "@types/d3-delaunay": "^6.0.4",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
