@@ -9,7 +9,7 @@ export interface IPoint {
   radius: number;
 }
 
-export const POINT_RADIUS = 10;
+export const POINT_RADIUS = 5;
 export const FIELD_WIDTH = 1000;
 export const FIELD_HEIGHT = 500;
 
@@ -31,9 +31,8 @@ const App = () => {
 
   const [pointCoord, setPointCoord] = useState();
 
-  // React useEffect to handle updating voronoi points
   useEffect(() => {
-    const voronoiPoints = generateVoronoiDiagram(points); // Assume points is already defined
+    const voronoiPoints = generateVoronoiDiagram(points);
     setVoronoiPoints(voronoiPoints.vertices);
     let maxDistance = 0;
     let maxCircle: IPoint | null = null;
@@ -51,7 +50,7 @@ const App = () => {
         `Voronoi Vertex: (${v.x}, ${v.y}), Closest Point: (${v.closestPoint.x}, ${v.closestPoint.y}), Distance: ${v.distance}`
       );
     });
-    console.log(maxCircle);
+
     setCircle(maxCircle);
   }, [points]);
 

@@ -87,7 +87,6 @@ export function generateVoronoiDiagram(points: IPoint[]): IVoronoiDiagram {
     vertices,
   };
 
-  console.log(result);
   return result;
 }
 
